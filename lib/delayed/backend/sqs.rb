@@ -21,7 +21,7 @@ module Delayed
           #puts "[init] Delayed::Backend::Sqs"
           @msg = nil
 
-          if data.is_a?(AWS::SQS::ReceivedMessage)
+          if data.is_a?(Aws::SQS::Message)
             @msg = data
             data = JSON.load(data.body)
           end
@@ -63,8 +63,20 @@ module Delayed
           payload = JSON.dump(@attributes)
 
           @msg.delete if @msg
-
-          sqs.queues.named(queue_name).send_message(payload, :delay_seconds  => @delay)
+          Rails.logger.debug("-----------aaaaaaaaa-------------")
+          Rails.logger.debug(sqs.list_queues.queue_urls)
+          Rails.logger.debug(sqs.list_queues.queue_urls[0])
+          Rails.logger.debug(sqs.list_queues)
+          Rails.logger.debug(sqs.list_queues[0])
+          Rails.logger.debug(sqs.list_queues[0][0])
+          Rails.logger.debug(@attributes)
+          pp @attributes
+          Rails.logger.debug(payload)
+          Rails.logger.debug(payload.class)
+          Rails.logger.debug("-----------bbbbbbbbbb-------------")
+          #sqs.send_message(payload, :delay_seconds  => @delay)
+          sqs.send_message(@attributes, :delay_seconds  => @delay)
+          #sqs.list_queues[0].send_message(payload, :delay_seconds  => @delay)
           true
         end
 

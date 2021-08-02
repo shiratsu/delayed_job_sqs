@@ -39,9 +39,9 @@ module Delayed
           # configure our gem after Rails completely boots so that we have
           # access to any config/initializers that were run
           config.after_initialize do
-            AWS::Rails.setup
+  #          Aws::Rails.setup
 
-            Delayed::Worker.sqs = AWS::SQS.new
+            Delayed::Worker.sqs = Aws::SQS::Client.new
             Delayed::Worker.configure {}
           end
         end
@@ -52,13 +52,13 @@ module Delayed
           cfg = YAML::load(File.read(path))
 
           unless cfg.keys[0]
-            raise "AWS Yaml configuration file is missing a section"
+            raise "Aws Yaml configuration file is missing a section"
           end
 
-          AWS.config(cfg.keys[0])
+          Aws.config(cfg.keys[0])
         end
 
-        Delayed::Worker.sqs = AWS::SQS.new
+        Delayed::Worker.sqs = Aws::SQS::Client.new
         Delayed::Worker.configure {}
       end
     end
